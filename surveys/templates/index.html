@@ -1,0 +1,38 @@
+<html>
+    <head>
+        <title>My Dudes</title>
+
+<style>
+    form {
+        margin: 0 auto;
+        width: 70%;
+    }
+    form input,textarea {
+        display: block;
+        margin: 1em;
+        width: 100%;
+    }
+</style>
+    </head>
+
+    <body>
+
+        <h1>Current Surveys</h1>
+        <ul>
+            {% for e in d %}
+            <li>{{ e }}</li>
+            {% endfor %}
+        </ul>
+
+
+        <form method="POST">
+            <h1>Créer sondage</h1>
+            <input type="text" name="title" placeholder="Nom de cours" />
+            <input type="text" name="student" placeholder="Nom de conférencier.e" />
+            <textarea name="instructions" placeholder="Instructions (facultatif)"></textarea>
+            <input type="submit" value="Créer" />
+        </form>
+
+    </body>
+
+</html>

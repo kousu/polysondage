@@ -1,0 +1,57 @@
+<html>
+
+    <head>
+        <style>
+
+body {
+    background-color: rgb(231, 236, 238);
+}
+
+    .survey {
+
+  margin-left: auto;
+  margin-right: auto;
+  width: fit-content;
+  /* this makes the survey take up 50% (and be centered) on large screens,
+   but on small screens it is at least
+   
+   TODO: is there a way to do this without specifying a size explicitly?
+       really what I want is for small screens to notice that they can't fit the content in 50%,
+       and so clamp the size to their minimum necessary size
+       https://developer.mozilla.org/en-US/docs/Web/CSS/fit-content ?
+       https://developer.mozilla.org/en-US/docs/Web/CSS/min-content ? -- this seems close to w
+       e.g. width: max(50%, min-content); should do it, but that's not legal CSS.
+   */
+  max-width: max(50%, 500px);
+}
+
+@media only screen and (max-width: 576px) {
+    label.rating {
+        /* hide the "Poor" and "Excellent" labels on small screens */
+        display: none;
+    }
+}
+
+.survey > div.header {
+  background-color: white;
+  border-radius: 8px;
+  padding: 24px;
+}
+        </style>
+    </head>
+
+    <body>
+
+
+        <div class='survey'>
+
+            <div class='header'>
+        <h1>Merci, vos responses ont été enregistré.</h1>
+
+            </div>
+            
+        </div>
+    </body>
+
+
+</html>

@@ -1,0 +1,176 @@
+<html>
+
+    <head>
+        <style>
+
+body {
+    background-color: rgb(231, 236, 238);
+}
+
+    .survey {
+
+  margin-left: auto;
+  margin-right: auto;
+  width: fit-content;
+  /* this makes the survey take up 50% (and be centered) on large screens,
+   but on small screens it is at least
+   
+   TODO: is there a way to do this without specifying a size explicitly?
+       really what I want is for small screens to notice that they can't fit the content in 50%,
+       and so clamp the size to their minimum necessary size
+       https://developer.mozilla.org/en-US/docs/Web/CSS/fit-content ?
+       https://developer.mozilla.org/en-US/docs/Web/CSS/min-content ? -- this seems close to w
+       e.g. width: max(50%, min-content); should do it, but that's not legal CSS.
+   */
+  max-width: max(50%, 500px);
+}
+
+@media only screen and (max-width: 576px) {
+    label.rating {
+        /* hide the "Poor" and "Excellent" labels on small screens */
+        display: none;
+    }
+}
+
+.survey > div.header {
+  background-color: white;
+  border-radius: 8px;
+  padding: 24px;
+}
+.survey > ol {
+  list-style-type: none;
+  padding: 0;
+}
+.survey > ol > li {
+  margin: 1em;
+  background-color: white;
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 12px;
+}
+.survey > ol > li > .response {
+    margin-top: .7em;
+
+}
+ol.rating {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+
+    /* this, in combination with display: inline-block below, means the ratings are always in a straight line */
+    white-space: nowrap;
+
+    width: min-content; /* shrink-wrap */
+    margin: 1.7em auto;
+    margin-bottom: 0;
+}
+ol.rating > li {
+    display: inline-block;
+}
+
+
+.response > textarea {
+    width: 100%;
+    height: 40%;
+}
+
+ol.rating li > input[type="radio"] {
+    /* replace the default, boring, radio buttons with stars */
+    appearance: none;
+    /* make them more visible -- emojis are too small by default usually */
+    font-size: 3em;
+}
+ol.rating li > input[type="radio"]::before {
+  content: "🌟";
+}
+ol.rating li > input[type="radio"]:checked::before {
+  content: "🌟";
+
+  /* highlight the chosen item */
+      /* this method is a nice effect, growing the selected item, but it knocks the layout around;
+         is there a way to preserve it?
+         */
+  /*font-size: 1.5em;*/
+
+  /* TODO: this could also be an svg: https://stackoverflow.com/questions/9185434/using-svg-as-background-image
+      background-image: url("data:image/svg+xml,***<here place encoded svg>***");
+      background-repeat: no-repeat;
+  */
+
+  /* highlight the chosen item */
+  background-color: #e7ecee;
+  border-radius: 1em;
+}
+
+    .survey input[type="submit"] {
+        font-size: 2em;
+background-color: #5d7b89;
+    border-radius: 8px;
+        padding: .2em .8em;
+            color: white;
+        }
+        </style>
+    </head>
+
+    <body>
+
+
+        <form method="POST" class='survey'>
+
+            <div class='header'>
+        <h1>{{ title }}</h1>
+            <h3>Nom de presenteur: {{ student }}</h3>
+
+            {{ instructions }}
+
+            </div>
+            
+            <ol>
+            {% for i, q in questions %}
+
+            <li>
+                <div class='question'>
+                {{ q.text }} {% if q.required %}<span style="color: red">*</span>{%endif%}
+                </div>
+
+                <div class='response'>
+                {% if q.__class__.__name__ == 'Text' %}
+                    <input type="text" name="q{{i}}" {% if q.required %}required{%endif%} placeholder="Your Answer" />
+                {% elif q.__class__.__name__ == 'TextArea' %}
+                    <textarea name="q{{i}}" {% if q.required %}required{%endif%} placeholder="Your Answer" ></textarea>
+                {% elif q.__class__.__name__ == 'Rating' %}
+                <ol class='rating'>
+                    <label class='rating'>Poor</label>
+                    {% for j in range(1, q.max+1) %}
+                    <li>
+                        <input type="radio" name="q{{i}}" value="{{j}}" {% if q.required %}required{%endif%} />
+                    </li>
+                    {% endfor %}
+                    <label class='rating'>Excellent</label>
+                </ol>
+                {% elif q.__class__.__name__ == 'MultipleChoice' %}
+                <ol class='multiplechoice'>
+                    {% for o in q.options %}
+                    <li>
+                        <input type="radio" name="q{{i}}" value="{{loop.index}}" {% if q.required %}required{%endif%} />
+                        <label for="{{loop.index}}">{{o}}</label>
+                    </li>
+                    {% endfor %}
+                </ol>
+                {% else %}
+                  Unhandled question type {{ q.__class.__name__ }}.
+                {% endif %}
+
+                </div>
+            </li>
+
+            {% endfor %}
+
+            </ol>
+
+            <input type="submit" value="Submit" />
+        </form>
+    </body>
+
+
+</html>
